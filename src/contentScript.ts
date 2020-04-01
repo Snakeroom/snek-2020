@@ -21,7 +21,7 @@ const options = noteElements.map(note => note.innerHTML.trim());
 
 fetch("https://api.snakeroom.org/y20/query", {
     method: "POST",
-    body: JSON.stringify({ options })
+    body: JSON.stringify({ options }),
 })
     .then(res => res.json())
     .then(data => {
@@ -33,7 +33,7 @@ fetch("https://api.snakeroom.org/y20/query", {
     })
     .catch(console.error);
 
-noteElements.forEach(noteElement => {
+noteElements.forEach((noteElement, i) => {
     const message = noteElement.innerHTML.trim();
     const observer = new MutationObserver(mutations => {
         const state =
@@ -43,23 +43,34 @@ noteElements.forEach(noteElement => {
                 )
                 .find(attr => attr.name === "state")?.value || "";
 
-        if (state === "incorrect") {
-            console.log("we incorrect");
-            fetch("https://api.snakeroom.org/y20/submit", {
-                method: "POST",
-                body: JSON.stringify({
-                    options: [
-                        {
-                            message,
-                            correct: false
-                        }
-                    ]
-                })
-            }).catch(console.error);
+        let body: any = null;
+        switch (state) {
+            case "incorrect":
+                body = [
+                    {
+                        message,
+                        correct: false,
+                    },
+                ];
+                break;
+            case "correct":
+                body = options.map((option, j) => ({
+                    message: option,
+                    correct: i === j,
+                }));
+                break;
+            default:
+                return;
         }
+        fetch("https://api.snakeroom.org/y20/submit", {
+            method: "POST",
+            body: JSON.stringify({
+                options: body,
+            }),
+        }).catch(console.error);
     });
     observer.observe(noteElement, {
         attributes: true,
-        attributeFilter: ["state"]
+        attributeFilter: ["state"],
     });
 });
