@@ -1,0 +1,12 @@
+.snek-active {
+    color: #81c784;
+    text-decoration: none;
+}
+
+.note-is-human {
+    color: #e57373;
+}
+
+.note-is-imposter {
+    color: #81c784;
+}
