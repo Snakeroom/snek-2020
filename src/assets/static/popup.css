@@ -56,7 +56,6 @@ body {
 
 #header {
     align-items: center;
-    border-bottom: 1px solid #999;
     text-align: center;
 }
 
@@ -64,12 +63,27 @@ body {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
-    padding: 10px 0;
+    padding: 30px 0;
 }
 
 h1 {
     font-size: 20px;
     font-weight: bold;
+}
+
+.subtitle,
+.credits {
+    color: #757575;
+}
+
+.credits {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.credits > span {
+    text-align: center;
 }
 
 .label {
