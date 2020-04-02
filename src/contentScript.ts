@@ -12,79 +12,63 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const wmyh = document.getElementsByTagName("gremlin-meta")[0];
-wmyh.innerHTML +=
-    "<br/><br/><a class='snek-active' href='https://sneknet.com' target='_blank'>Sneknet active.</a>";
+const gremlinMeta = document.getElementsByTagName("gremlin-meta")[0];
+gremlinMeta.innerHTML += "<br/><br/>";
+const sneknetActive = createSneknetActive();
+gremlinMeta.appendChild(sneknetActive);
 
 const noteElements = Array.from(document.getElementsByTagName("gremlin-note"));
-const options = noteElements.map(note => note.innerHTML.trim());
 
-const modal = document.createElement("div");
-modal.className = "snek-modal";
-modal.innerHTML = "Loading";
-const modalContainer = document.createElement("div");
-modalContainer.className = "snek-modal-container";
-modalContainer.appendChild(modal);
+const modalContainer = createModalContainer();
 document.body.appendChild(modalContainer);
 
 fetch("https://api.snakeroom.org/y20/query", {
     method: "POST",
-    body: JSON.stringify({ options }),
+    body: JSON.stringify({
+        options: noteElements.map(note => note.innerHTML.trim()),
+    }),
 })
     .then(res => res.json())
     .then(data => {
         data.answers.forEach(answer => {
             if (!answer.correct) {
-                const noteElement = noteElements[answer.i];
-                noteElement.innerHTML +=
-                    "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
-                noteElement.className += " incorrect-note";
+                markAsHuman(answer.i);
             }
         });
-        modalContainer.style.display = "none";
+        closeModal(modalContainer);
     })
     .catch(console.error);
 
-noteElements.forEach((noteElement, i) => {
-    const message = noteElement.innerHTML.trim();
-    const observer = new MutationObserver(mutations => {
-        const state =
-            mutations
-                .flatMap((mutation: any) =>
-                    Array.from((mutation.target as Element).attributes)
-                )
-                .find(attr => attr.name === "state")?.value || "";
+function createModalContainer(): HTMLDivElement {
+    const modal = document.createElement("div");
+    modal.className = "snek-modal";
+    modal.innerHTML = "Loading";
 
-        let body: any = null;
-        switch (state) {
-            case "incorrect":
-                body = [
-                    {
-                        message,
-                        correct: false,
-                    },
-                ];
-                break;
-            case "correct":
-                body = options.map((option, j) => ({
-                    message: option,
-                    correct: i === j,
-                }));
-                break;
-            default:
-                return;
-        }
-        fetch("https://api.snakeroom.org/y20/submit", {
-            method: "POST",
-            credentials: "include",
-            mode: "cors",
-            body: JSON.stringify({
-                options: body,
-            }),
-        }).catch(console.error);
+    const modalContainer = document.createElement("div");
+    modalContainer.className = "snek-modal-container";
+    modalContainer.appendChild(modal);
+
+    return modalContainer;
+}
+
+function closeModal(modalContainer: HTMLDivElement) {
+    modalContainer.style.display = "none";
+}
+
+function markAsHuman(idx: number) {
+    const noteElement = noteElements[idx];
+    noteElement.innerHTML +=
+        "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
+    noteElement.className += " incorrect-note";
+}
+
+function createSneknetActive() {
+    const sneknetActive = document.createElement("a");
+    sneknetActive.className = "snek-active";
+    sneknetActive.href = "JavaScript:void(0);";
+    sneknetActive.innerText = "Sneknet active";
+    sneknetActive.addEventListener("click", () => {
+        chrome.runtime.sendMessage("open-snakeroom");
     });
-    observer.observe(noteElement, {
-        attributes: true,
-        attributeFilter: ["state"],
-    });
-});
+    return sneknetActive;
+}

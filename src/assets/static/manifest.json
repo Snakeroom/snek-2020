@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
 
-    "name": "Snek",
+    "name": "Sneknet 2020",
     "description": "Help the community identify humans and rid out the imposter",
-    "version": "1.2.0",
+    "version": "1.0.0",
 
     "browser_action": {
         "default_icon": "icon.png",
@@ -17,8 +17,7 @@
         "persistent": true
     },
 
-    "permissions": [
-    ],
+    "permissions": [],
 
     "content_scripts": [
         {
