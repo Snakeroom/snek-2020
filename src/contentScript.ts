@@ -19,6 +19,14 @@ wmyh.innerHTML +=
 const noteElements = Array.from(document.getElementsByTagName("gremlin-note"));
 const options = noteElements.map(note => note.innerHTML.trim());
 
+const modal = document.createElement("div");
+modal.className = "snek-modal";
+modal.innerHTML = "Loading";
+const modalContainer = document.createElement("div");
+modalContainer.className = "snek-modal-container";
+modalContainer.appendChild(modal);
+document.body.appendChild(modalContainer);
+
 fetch("https://api.snakeroom.org/y20/query", {
     method: "POST",
     body: JSON.stringify({ options }),
@@ -26,10 +34,14 @@ fetch("https://api.snakeroom.org/y20/query", {
     .then(res => res.json())
     .then(data => {
         data.answers.forEach(answer => {
-            noteElements[answer.i].innerHTML += answer.correct
-                ? "<span class='note-is-imposter'> &nbsp;&nbsp; <b>IMPOSTER</b></span>"
-                : "<span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
+            if (!answer.correct) {
+                const noteElement = noteElements[answer.i];
+                noteElement.innerHTML +=
+                    "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
+                noteElement.className += " incorrect-note";
+            }
         });
+        modalContainer.style.display = "none";
     })
     .catch(console.error);
 
@@ -65,6 +77,7 @@ noteElements.forEach((noteElement, i) => {
         fetch("https://api.snakeroom.org/y20/submit", {
             method: "POST",
             credentials: "include",
+            mode: "cors",
             body: JSON.stringify({
                 options: body,
             }),

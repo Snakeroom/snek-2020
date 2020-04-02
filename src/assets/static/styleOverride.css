@@ -4,9 +4,59 @@
 }
 
 .note-is-human {
+    margin-left: auto;
     color: #e57373;
+    float: right;
 }
 
 .note-is-imposter {
     color: #81c784;
+}
+
+gremlin-note {
+    background-color: #9e9e9e22;
+    border: none;
+    border-radius: 0;
+}
+
+gremlin-note:hover {
+    background-color: #9e9e9e11;
+}
+
+.incorrect-note {
+    background-color: #e5737322;
+}
+
+.incorrect-note:hover {
+    background-color: #e5737311;
+}
+
+gremlin-note[state="waiting"] {
+    background-color: #616161;
+}
+
+gremlin-note[state="correct"] {
+    background-color: #1b5e20;
+}
+
+gremlin-note[state="incorrect"] {
+    background-color: #b71c1c;
+}
+
+.snek-modal-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.snek-modal {
+    background-color: #9e9e9e22;
+    backdrop-filter: blur(10px);
+    padding: 40px 80px;
+    font-size: 32px;
 }
