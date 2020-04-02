@@ -28,7 +28,8 @@
         {
             "matches": ["https://gremlins-api.reddit.com/room*"],
             "js": ["contentScript.js"],
-            "css": ["styleOverride.css"]
+            "css": ["styleOverride.css"],
+            "all_frames": true
         }
     ]
 }
