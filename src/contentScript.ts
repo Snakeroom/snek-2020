@@ -64,6 +64,7 @@ noteElements.forEach((noteElement, i) => {
         }
         fetch("https://api.snakeroom.org/y20/submit", {
             method: "POST",
+            credentials: "include",
             body: JSON.stringify({
                 options: body,
             }),
