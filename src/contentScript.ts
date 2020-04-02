@@ -31,9 +31,13 @@ fetch("https://api.snakeroom.org/y20/query", {
     .then(res => res.json())
     .then(data => {
         data.answers.forEach(answer => {
-            if (!answer.correct) {
-                markAsHuman(answer.i);
-            }
+            const noteElement = noteElements[answer.i];
+            noteElement.innerHTML += answer.correct
+                ? "<i></i><span class='note-is-imposter'> &nbsp;&nbsp; <b>IMPOSTER</b></span>"
+                : "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
+            noteElement.className += answer.correct
+                ? " correct-note"
+                : " incorrect-note";
         });
         closeModal(modalContainer);
     })
@@ -53,13 +57,6 @@ function createModalContainer(): HTMLDivElement {
 
 function closeModal(modalContainer: HTMLDivElement) {
     modalContainer.style.display = "none";
-}
-
-function markAsHuman(idx: number) {
-    const noteElement = noteElements[idx];
-    noteElement.innerHTML +=
-        "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
-    noteElement.className += " incorrect-note";
 }
 
 function createSneknetActive() {

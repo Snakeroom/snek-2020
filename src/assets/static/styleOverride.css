@@ -3,10 +3,14 @@
     text-decoration: none;
 }
 
-.note-is-human {
+.note-is-human,
+.note-is-imposter {
     margin-left: auto;
-    color: #e57373;
     float: right;
+}
+
+.note-is-human {
+    color: #e57373;
 }
 
 .note-is-imposter {
@@ -21,6 +25,14 @@ gremlin-note {
 
 gremlin-note:hover {
     background-color: #9e9e9e11;
+}
+
+.correct-note {
+    background-color: #81c78422;
+}
+
+.correct-note:hover {
+    background-color: #81c78411;
 }
 
 .incorrect-note {
