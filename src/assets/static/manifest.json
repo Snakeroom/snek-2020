@@ -18,10 +18,6 @@
     },
 
     "permissions": [
-        "activeTab",
-        "contentSettings",
-        "https://www.reddit.com/api/*",
-        "storage"
     ],
 
     "content_scripts": [
