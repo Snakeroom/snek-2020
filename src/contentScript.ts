@@ -12,12 +12,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+const noteElements = Array.from(document.getElementsByTagName("gremlin-note"));
+const options = noteElements.map(note => note.innerHTML.trim());
+
 const gremlinMeta = document.getElementsByTagName("gremlin-meta")[0];
 gremlinMeta.innerHTML += "<br/><br/>";
 const sneknetActive = createSneknetActive();
 gremlinMeta.appendChild(sneknetActive);
-
-const noteElements = Array.from(document.getElementsByTagName("gremlin-note"));
 
 const modalContainer = createModalContainer();
 document.body.appendChild(modalContainer);
@@ -25,16 +26,18 @@ document.body.appendChild(modalContainer);
 fetch("https://api.snakeroom.org/y20/query", {
     method: "POST",
     body: JSON.stringify({
-        options: noteElements.map(note => note.innerHTML.trim()),
+        options,
     }),
 })
     .then(res => res.json())
     .then(data => {
         data.answers.forEach(answer => {
             const noteElement = noteElements[answer.i];
-            noteElement.innerHTML += answer.correct
-                ? "<i></i><span class='note-is-imposter'> &nbsp;&nbsp; <b>IMPOSTER</b></span>"
-                : "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>";
+            noteElement.innerHTML =
+                options[answer.i] +
+                (answer.correct
+                    ? "<i></i><span class='note-is-imposter'> &nbsp;&nbsp; <b>IMPOSTER</b></span>"
+                    : "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>");
             noteElement.className += answer.correct
                 ? " correct-note"
                 : " incorrect-note";
