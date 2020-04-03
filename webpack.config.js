@@ -21,25 +21,26 @@ module.exports = {
     entry: {
         event: ["./src/event.ts"],
         popup: ["./src/popup.ts"],
-        contentScript: ["./src/contentScript.ts"]
+        contentScript: ["./src/contentScript.ts"],
+        auto: ["./src/auto.ts"],
     },
     output: {
         path: dist,
         filename: "[name].js",
-        chunkFilename: "[name].chunk.js"
+        chunkFilename: "[name].chunk.js",
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js"]
+        extensions: [".ts", ".tsx", ".js"],
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                use: "ts-loader"
-            }
-        ]
+                use: "ts-loader",
+            },
+        ],
     },
     plugins: [new CopyPlugin([{ from: "./src/assets/static" }])],
-    devtool: "source-map"
+    devtool: "source-map",
 };

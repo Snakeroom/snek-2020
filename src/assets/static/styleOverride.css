@@ -79,3 +79,42 @@ gremlin-note[state="incorrect"] {
     padding: 40px 80px;
     font-size: 32px;
 }
+
+.auto-snek-area {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    grid-template-columns: 100px auto;
+}
+
+.auto-snek-button {
+    background: linear-gradient(to left, #616161, #424242);
+    border: none;
+    border-radius: 3px;
+    color: white;
+    padding: 10px;
+}
+
+.auto-snek-button.on {
+    background: linear-gradient(to left, #689f38, #388e3c);
+}
+
+.auto-snek-button:hover {
+    cursor: pointer;
+}
+
+.auto-snek-result {
+    background: linear-gradient(to left, #616161, #424242);
+    border: none;
+    border-radius: 3px;
+    color: white;
+    padding: 10px;
+}
+
+.auto-snek-result.win {
+    background: linear-gradient(to left, #689f38, #388e3c);
+}
+
+.auto-snek-result.loss {
+    background: linear-gradient(to left, #e64a19, #d32f2f);
+}
