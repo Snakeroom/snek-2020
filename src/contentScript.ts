@@ -23,28 +23,37 @@ gremlinMeta.appendChild(sneknetActive);
 const modalContainer = createModalContainer();
 document.body.appendChild(modalContainer);
 
-fetch("https://api.snakeroom.org/y20/query", {
-    method: "POST",
-    body: JSON.stringify({
-        options,
-    }),
-})
-    .then(res => res.json())
-    .then(data => {
-        data.answers.forEach(answer => {
-            const noteElement = noteElements[answer.i];
-            noteElement.innerHTML =
-                options[answer.i] +
-                (answer.correct
-                    ? "<i></i><span class='note-is-imposter'> &nbsp;&nbsp; <b>IMPOSTER</b></span>"
-                    : "<i></i><span class='note-is-human'> &nbsp;&nbsp; <b>HUMAN</b></span>");
-            noteElement.className += answer.correct
-                ? " correct-note"
-                : " incorrect-note";
+Promise.all([
+    mapSource(sourceSneknet(), "SNEKNET"),
+    mapSource(sourceSpacescience(), "SPACESCIENCE"),
+    mapSource(sourceOcean(), "OCEAN"),
+])
+    .then(a => a.flat())
+    .then(answers => {
+        const seen: number[] = [];
+        answers.forEach(answer => {
+            if (!seen.includes(answer.index)) {
+                const noteElement = noteElements[answer.index];
+                noteElement.innerHTML += `<i></i><span class='note-is-human'> &nbsp;&nbsp; <small><b>${answer.sourceName}</b></small></span>`;
+                noteElement.className += " incorrect-note";
+                seen.push(answer.index);
+            }
         });
         closeModal(modalContainer);
     })
     .catch(console.error);
+
+interface MappedSourceIndex {
+    index: number;
+    sourceName: string;
+}
+
+async function mapSource(
+    promise: Promise<number[]>,
+    sourceName: string
+): Promise<MappedSourceIndex[]> {
+    return promise.then(a => a.map(v => ({ index: v, sourceName })));
+}
 
 function createModalContainer(): HTMLDivElement {
     const modal = document.createElement("div");
@@ -71,4 +80,40 @@ function createSneknetActive() {
         chrome.runtime.sendMessage("open-snakeroom");
     });
     return sneknetActive;
+}
+
+async function sourceSneknet(): Promise<number[]> {
+    const data = await fetch("https://api.snakeroom.org/y20/query", {
+        method: "POST",
+        body: JSON.stringify({
+            options,
+        }),
+    }).then(res => res.json());
+    return data.answers.filter(a => !a.correct).map(a => a.i);
+}
+
+async function sourceSpacescience(): Promise<number[]> {
+    const promises = noteElements.map(async (element, i) => {
+        const data = await fetch(
+            `https://spacescience.tech/check.php?id=${element.id}`,
+            {
+                method: "GET",
+                redirect: "follow",
+            }
+        ).then(res => res.json());
+        for (let key in data) {
+            console.log(data[key]);
+            if (data[key]?.flag === "1" && data[key]?.result === "LOSE") {
+                return i;
+            }
+        }
+        return null;
+    });
+    return Promise.all(promises).then(a =>
+        a.filter((v): v is number => v !== null)
+    );
+}
+
+async function sourceOcean(): Promise<number[]> {
+    return [];
 }
